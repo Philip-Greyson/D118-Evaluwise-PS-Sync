@@ -41,9 +41,9 @@ if __name__ == '__main__':  # main file execution
         startTime = startTime.strftime('%H:%M:%S')
         print(f'INFO: Execution started at {startTime}')
         print(f'INFO: Execution started at {startTime}', file=log)
-        with open(OUTPUT_FILENAME, 'w') as output:
+        with open(OUTPUT_FILENAME, 'w', encoding="utf-8") as output:
             # print out header rows into files, column names with comma delimiters
-            print('Teacher ID,First Name,Last Name,Email,Schools,School Groups,Positions,Date of Hire,Date of Birth', file=output)
+            print('Teacher ID,First Name,Last Name,Email,Schools,Positions,Date of Hire,Date of Birth', file=output)
             try:
                 with oracledb.connect(user=DB_UN, password=DB_PW, dsn=DB_CS) as con:  # create the connecton to the database
                     with con.cursor() as cur:  # start an entry cursor
@@ -75,7 +75,7 @@ if __name__ == '__main__':  # main file execution
                                     position = staff[11] + '[A]' if staff[11] else ""
                                     subgroup = staff[12] if staff[12] else ""
                                     print(f'DBUG: {email} - {firstName} {lastName} - {idNum}, {birthdate}')
-                                    print(f'{idNum},{firstName},{lastName},{email},{building},{subgroup},"{position}",{hiredate},{birthdate}', file=output)  # output the relevant fields to the .csv file
+                                    print(f'{idNum},{firstName},{lastName},{email},{building},"{position}",{hiredate},{birthdate}', file=output)  # output the relevant fields to the .csv file
                             except Exception as er:
                                 print(f'ERROR while processing {staff[0]} - DCID {staff[1]}: {er}')
                                 print(f'ERROR while processing {staff[0]} - DCID {staff[1]}: {er}', file=log)
