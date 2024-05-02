@@ -58,8 +58,13 @@ if __name__ == '__main__':  # main file execution
                         print(f'DBUG: {schoolMappings}')  # debug
                         print(f'DBUG: {schoolMappings}', file=log)  # debug
 
-                        # do the main SQL query for all staff members
-                        cur.execute('SELECT u.email_addr, u.dcid, u.first_name, u.last_name, u.teachernumber, core.dob, il.legal_first_name, il.legal_last_name, il.iein, u.homeschoolid, hr.curhiredate, hr.eeo5class, hr.staff_categorystatus FROM users u LEFT JOIN s_il_usr_x il ON u.dcid = il.usersdcid LEFT JOIN userscorefields core ON u.dcid = core.usersdcid LEFT JOIN u_humanresources hr ON u.dcid = hr.usersdcid WHERE u.email_addr IS NOT NULL')
+                        # do the main SQL query for all staff members. Exclude staff who are not active in their homeschool, or staff who do not have emails
+                        cur.execute('SELECT u.email_addr, u.dcid, u.first_name, u.last_name, u.teachernumber, core.dob, il.legal_first_name, il.legal_last_name, il.iein, u.homeschoolid, hr.curhiredate, hr.eeo5class, hr.staff_categorystatus FROM users u \
+                            LEFT JOIN s_il_usr_x il ON u.dcid = il.usersdcid \
+                            LEFT JOIN userscorefields core ON u.dcid = core.usersdcid \
+                            LEFT JOIN u_humanresources hr ON u.dcid = hr.usersdcid \
+                            LEFT JOIN schoolstaff s ON (u.dcid = s.users_dcid AND u.homeschoolid = s.schoolid) \
+                            WHERE u.email_addr IS NOT NULL AND  s.status = 1')
                         staffMembers = cur.fetchall()  # fetchall() is used to fetch all records from result set
                         for staff in staffMembers:
                             try:
