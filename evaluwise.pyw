@@ -21,11 +21,10 @@ DB_UN = os.environ.get('POWERSCHOOL_READ_USER')  # username for read-only databa
 DB_PW = os.environ.get('POWERSCHOOL_DB_PASSWORD')  # the password for the database account
 DB_CS = os.environ.get('POWERSCHOOL_PROD_DB')  # the IP address, port, and database name to connect to
 
-### TODO: GET SFTP INFO
-#set up sftp login info, stored as environment variables on system
-SFTP_UN = os.environ.get('')
-SFTP_PW = os.environ.get('')
-SFTP_HOST = os.environ.get('')
+# sftp connection info , stored as environment variables on system
+SFTP_UN = os.environ.get('EVALUWISE_SFTP_USERNAME')
+SFTP_PW = os.environ.get('EVALUWISE_SFTP_PASSWORD')
+SFTP_HOST = os.environ.get('EVALUWISE_SFTP_ADDRESS')
 CNOPTS = pysftp.CnOpts(knownhosts='known_hosts')  # connection options to use the known_hosts file for key validation
 
 # SFTP_OUTPUT_DIRECTORY = ''
@@ -78,7 +77,7 @@ if __name__ == '__main__':  # main file execution
                                     building = schoolMappings.get(staff[9]).title()  # convert the homeschool id number into the string name of the school using the mappings dictionary
                                     hiredate = staff[10].strftime('%m/%d/%Y') if staff[10] else ""
                                     position = staff[11] + '[A]' if staff[11] else ""
-                                    subgroup = staff[12] if staff[12] else ""
+                                    # subgroup = staff[12] if staff[12] else ""  # not going to be used at this moment
                                     print(f'DBUG: {email} - {firstName} {lastName} - {idNum}, {birthdate}')
                                     print(f'{idNum},{firstName},{lastName},{email},{building},"{position}",{hiredate},{birthdate}', file=output)  # output the relevant fields to the .csv file
                             except Exception as er:
@@ -87,6 +86,21 @@ if __name__ == '__main__':  # main file execution
             except Exception as er:
                     print(f'ERROR while connecting to PS Database or running initial query: {er}')
                     print(f'ERROR while connecting to PS Database or running initial query: {er}', file=log)
+
+        try:
+            # connect to the Clever SFTP server using the login details stored as environement variables
+            with pysftp.Connection(SFTP_HOST, username=SFTP_UN, password=SFTP_PW, cnopts=CNOPTS) as sftp:
+                print(f'INFO: SFTP connection to Evaluwise at {SFTP_HOST} successfully established')
+                print(f'INFO: SFTP connection to Evaluwise at {SFTP_HOST} successfully established', file=log)
+                # print(sftp.pwd) # debug, show what folder we connected to
+                # print(sftp.listdir())  # debug, show what other files/folders are in the current directory
+                sftp.put(OUTPUT_FILENAME)  # upload the file onto the sftp server
+                print("INFO: Staff file successfully placed on remote server")
+                print("INFO: Staff file successfully placed on remote server", file=log)
+        except Exception as er:
+            print(f'ERROR while connecting or uploading to Clever SFTP server: {er}')
+            print(f'ERROR while connecting or uploading to Clever SFTP server: {er}', file=log)
+
         endTime = datetime.now()
         endTime = endTime.strftime('%H:%M:%S')
         print(f'INFO: Execution ended at {endTime}')
