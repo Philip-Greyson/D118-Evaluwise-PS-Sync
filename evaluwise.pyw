@@ -74,7 +74,7 @@ if __name__ == '__main__':  # main file execution
                                     lastName = staff[7] if staff[7] else staff[3]  # use the legal last name if it exists, otherwise the normal last name
                                     birthdate = staff[5] if staff[5] else ""  # use the date of birth field if it exists, otherwise set it to a blank string. Strangely enough the usercorefields DOB is not a timestamp format, just a string
                                     email = staff[0]
-                                    building = schoolMappings.get(staff[9]).title()  # convert the homeschool id number into the string name of the school using the mappings dictionary
+                                    building = schoolMappings.get(staff[9], 'Central Office').title()  # convert the homeschool id number into the string name of the school using the mappings dictionary, return 'Central Office' if not found
                                     hiredate = staff[10].strftime('%m/%d/%Y') if staff[10] else ""
                                     position = staff[11] + '[A]' if staff[11] else ""
                                     # subgroup = staff[12] if staff[12] else ""  # not going to be used at this moment
