@@ -88,7 +88,7 @@ if __name__ == '__main__':  # main file execution
                     print(f'ERROR while connecting to PS Database or running initial query: {er}', file=log)
 
         try:
-            # connect to the Clever SFTP server using the login details stored as environement variables
+            # connect to the Evaluwise SFTP server using the login details stored as environement variables
             with pysftp.Connection(SFTP_HOST, username=SFTP_UN, password=SFTP_PW, cnopts=CNOPTS) as sftp:
                 print(f'INFO: SFTP connection to Evaluwise at {SFTP_HOST} successfully established')
                 print(f'INFO: SFTP connection to Evaluwise at {SFTP_HOST} successfully established', file=log)
@@ -98,8 +98,8 @@ if __name__ == '__main__':  # main file execution
                 print("INFO: Staff file successfully placed on remote server")
                 print("INFO: Staff file successfully placed on remote server", file=log)
         except Exception as er:
-            print(f'ERROR while connecting or uploading to Clever SFTP server: {er}')
-            print(f'ERROR while connecting or uploading to Clever SFTP server: {er}', file=log)
+            print(f'ERROR while connecting or uploading to Evaluwise SFTP server: {er}')
+            print(f'ERROR while connecting or uploading to Evaluwise SFTP server: {er}', file=log)
 
         endTime = datetime.now()
         endTime = endTime.strftime('%H:%M:%S')
